@@ -1,0 +1,54 @@
+function doGet(e) {
+  const mode = e.parameter.mode;
+
+  if (mode === "add") {
+    return simpanData(e);
+  }
+
+  if (mode === "grafik") {
+    return ambilDataGrafik();
+  }
+
+  return ContentService.createTextOutput("Mode tidak dikenal");
+}
+
+/* SAVE DATA FORM */
+function simpanData(e) {
+  const nama = e.parameter.nama;
+  const npp = e.parameter.npp;
+  const divisi = e.parameter.divisi;
+  const alasan = e.parameter.alasan;
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("ABSENSI");
+
+  sheet.appendRow([
+    new Date(),
+    nama,
+    npp,
+    divisi,
+    alasan
+  ]);
+
+  return ContentService
+    .createTextOutput("Data berhasil disimpan!");
+}
+
+/* GET DATA FOR DASHBOARD */
+function ambilDataGrafik() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("ABSENSI");
+  const data = sheet.getDataRange().getValues();
+
+  data.shift(); // remove header
+
+  const hitung = {};
+
+  data.forEach(row => {
+    const divisi = row[3];
+    if (!hitung[divisi]) hitung[divisi] = 0;
+    hitung[divisi]++;
+  });
+
+  return ContentService
+    .createTextOutput(JSON.stringify(Object.entries(hitung)))
+    .setMimeType(ContentService.MimeType.JSON);
+}
