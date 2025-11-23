@@ -1,0 +1,54 @@
+function doGet(e) {
+  if (e.parameter.nama) {
+    return saveData(e);
+  }
+
+  return getDashboardData();
+}
+
+function getDashboardData() {
+  var ss = SpreadsheetApp.openById("12VdPIxPGEGxKsd7Y2VFdOkLbIS3zVfNzcFSigV7U7Nw");
+  var sheet = ss.getSheetByName("ABSENSI");
+  var data = sheet.getDataRange().getValues();
+
+  var divisiCount = {};
+  var namaCount = {};
+
+  for (var i = 1; i < data.length; i++) {
+    var nama = data[i][1];
+    var divisi = data[i][3];
+
+    if (divisi) divisiCount[divisi] = (divisiCount[divisi] || 0) + 1;
+    if (nama) namaCount[nama] = (namaCount[nama] || 0) + 1;
+  }
+
+  var divisiArray = [];
+  for (var d in divisiCount) divisiArray.push({ divisi: d, count: divisiCount[d] });
+
+  var rankingArray = [];
+  for (var n in namaCount) rankingArray.push({ nama: n, count: namaCount[n] });
+
+  rankingArray.sort((a, b) => b.count - a.count);
+
+  return ContentService.createTextOutput(
+    JSON.stringify({
+      divisi: divisiArray,
+      ranking: rankingArray
+    })
+  ).setMimeType(ContentService.MimeType.JSON);
+}
+
+function saveData(e) {
+  var ss = SpreadsheetApp.openById("12VdPIxPGEGxKsd7Y2VFdOkLbIS3zVfNzcFSigV7U7Nw");
+  var sheet = ss.getSheetByName("ABSENSI");
+
+  sheet.appendRow([
+    new Date(),
+    e.parameter.nama,
+    e.parameter.npp,
+    e.parameter.divisi,
+    e.parameter.alasan
+  ]);
+
+  return ContentService.createTextOutput("OK");
+}
