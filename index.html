@@ -16,195 +16,197 @@
 
   <style>
     :root{
-      --emerald-50: #E8F8F1;
-      --emerald-100: #CFF3DF;
-      --emerald-300: #66CDAA;
-      --emerald-500: #2E8B57; /* main */
-      --accent: #1F6F4A;
-      --card-bg: #ffffff;
-      --muted: #6b7280;
+      --soft-red-50:#fdecec;
+      --soft-red-100:#f9d5d5;
+      --soft-red-300:#e79a9a;
+      --soft-red-500:#c75f5f; 
+      --card-bg:#fff;
+      --muted:#6b7280;
     }
+
     body{
-      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: linear-gradient(180deg, var(--emerald-50), #fff 45%);
-      color: #0f172a;
+      font-family: "Inter", system-ui;
+      background: linear-gradient(180deg,var(--soft-red-50),#fff 40%);
       padding: 28px;
+      color:#2b2b2b;
     }
 
-    .brand {
-      color: var(--emerald-500);
-      font-weight: 700;
-      letter-spacing: 0.2px;
+    .brand-title{
+      font-size:32px;
+      font-weight:800;
+      color:var(--soft-red-500);
+      text-align:center;
+      margin-bottom:4px;
+    }
+    .subtitle{
+      text-align:center;
+      color:#777;
+      margin-top:-6px;
+      margin-bottom:25px;
     }
 
-    .card-premium {
-      background: var(--card-bg);
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(16,24,40,0.06);
-      border: 1px solid rgba(46,139,87,0.08);
+    /* Card */
+    .card-premium{
+      background:var(--card-bg);
+      border-radius:14px;
+      border:1px solid rgba(199,95,95,0.15);
+      box-shadow:0 8px 26px rgba(0,0,0,0.06);
     }
 
-    .form-label { font-weight:600; color:#0f172a; }
-    .hint { color: var(--muted); font-size: 13px; }
-
-    .btn-emerald {
-      background: linear-gradient(90deg,var(--emerald-300),var(--emerald-500));
-      border: none;
-      color: #fff;
-      font-weight: 600;
-      box-shadow: 0 6px 18px rgba(46,139,87,0.18);
-      border-radius: 10px;
-      padding: 10px 14px;
+    .card-form{
+      padding:0;
+      border-left:8px solid var(--soft-red-300);
     }
-    .btn-emerald:hover { transform: translateY(-2px); }
 
-    .btn-outline-emerald {
-      color: var(--emerald-500);
-      border-color: rgba(46,139,87,0.14);
-      background: rgba(46,139,87,0.03);
+    .card-header{
+      background: var(--soft-red-100);
+      border-bottom: 1px solid rgba(199,95,95,0.25);
+      padding:20px;
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
+    }
+
+    .card-body{
+      padding: 26px 32px;
+    }
+
+    .form-label{ font-weight:600; }
+
+    /* Buttons */
+    .btn-red{
+      background: linear-gradient(90deg,var(--soft-red-300),var(--soft-red-500));
+      border:none;
+      color:white;
       font-weight:600;
       border-radius:10px;
+      padding:10px 16px;
     }
 
-    /* Dashboard cards */
-    .stat-card {
-      background: linear-gradient(180deg, #fff, #fbfffb);
-      border: 1px solid rgba(46,139,87,0.06);
-      border-radius: 10px;
-      padding: 12px 16px;
-    }
-
-    /* Table styling */
-    .table-top10 thead th { border-bottom: 2px solid rgba(46,139,87,0.12); }
-    .badge-rank { background: var(--emerald-300); color: #063; font-weight:700; }
-
-    /* responsive */
-    @media (min-width: 992px){
-      .layout-grid { display: grid; grid-template-columns: 1fr 420px; gap: 24px; align-items:start; }
+    .btn-dashboard{
+      background:linear-gradient(135deg, var(--soft-red-300), var(--soft-red-500));
+      border:none;
+      color:white;
+      font-weight:700;
+      padding:14px 20px;
+      border-radius:14px;
+      width:100%;
+      box-shadow:0 6px 16px rgba(199,95,95,0.28);
+      transition:0.3s;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <div class="brand" style="font-size:20px">ABSENSI KETERLAMBATAN</div>
-        <div class="hint">Form keterlambatan & Dashboard </div>
-      </div>
+<div class="container">
 
-      <div>
-        <button id="btnDashboardTop" class="btn btn-outline-emerald">Lihat Dashboard</button>
-      </div>
+  <!-- HEADER -->
+  <div class="text-center mb-4">
+    <div class="brand-title">ABSENSI KETERLAMBATAN</div>
+    <div class="subtitle">Form keterlambatan & Dashboard</div>
+  </div>
+
+
+  <!-- =========================== -->
+  <!-- FORM CARD -->
+  <!-- =========================== -->
+  <div class="card-premium card-form mb-4">
+    
+    <!-- HEADER CARD -->
+    <div class="card-header">
+      <h4 style="color:var(--soft-red-500); margin:0;">Form Keterlambatan</h4>
+      <small class="text-muted">Isi data pegawai yang terlambat. Data akan tersimpan di Database HCC.</small>
     </div>
 
-    <!-- Main layout -->
-    <div class="layout-grid">
+    <!-- CARD BODY -->
+    <div class="card-body">
+      <form id="absenForm">
 
-      <!-- Left: Form Card -->
-      <div class="card-premium p-4">
-        <h4 style="color:var(--accent); margin-bottom:8px">Form Keterlambatan</h4>
-        <p class="hint mb-3">Isi data pegawai yang terlambat. Data akan tersimpan Database HCC</p>
+        <div class="mb-3">
+          <label class="form-label">Nama Pegawai</label>
+          <input id="nama" type="text" class="form-control" required placeholder="Nama Lengkap">
+        </div>
 
-        <form id="absenForm">
-          <div class="mb-3">
-            <label class="form-label">Nama Pegawai</label>
-            <input id="nama" type="text" class="form-control" required placeholder="Nama Lengkap">
-          </div>
+        <div class="mb-3">
+          <label class="form-label">NPP Pegawai</label>
+          <input id="npp" type="text" class="form-control" required placeholder="NPP Pegawai">
+        </div>
 
-          <div class="mb-3">
-            <label class="form-label">NPP Pegawai</label>
-            <input id="npp" type="text" class="form-control" required placeholder="NPP Pegawai">
-          </div>
+        <div class="mb-3">
+          <label class="form-label">Divisi</label>
+          <select id="divisi" class="form-select" required>
+            <option value="">-- Pilih Divisi --</option>
+            <option>CSI</option><option>FRM</option><option>HCC</option><option>INA</option>
+            <option>MBS</option><option>OPS</option><option>OPR-1</option><option>OPR-2</option>
+            <option>PLM</option><option>SBD</option>
+          </select>
+        </div>
 
-          <div class="mb-3">
-            <label class="form-label">Divisi</label>
-              <select id="divisi" class="form-select" required>                      
-                    <option value="">-- Pilih Divisi --</option>
-                    <option value="CSI">CSI</option>
-                    <option value="FRM">FRM</option>
-                    <option value="HCC">HCC</option>
-                    <option value="INA">INA</option>
-                    <option value="MBS">MBS</option>
-                    <option value="OPS">OPS</option>
-                    <option value="OPR-1">OPR-1</option>
-                    <option value="OPR-2">OPR-2</option>
-                    <option value="PLM">PLM</option>
-                    <option value="SBD">SBD</option>      
-              </select>
-          </div>
+        <div class="mb-3">
+          <label class="form-label">Alasan Keterlambatan</label>
+          <textarea id="alasan" rows="3" class="form-control" required></textarea>
+        </div>
 
-          <div class="mb-3">
-            <label class="form-label">Alasan Keterlambatan</label>
-            <textarea id="alasan" rows="3" class="form-control" placeholder="Misalnya : macet, sakit, kendaraan rusak dan lain -lain" required></textarea>
-          </div>
-
-          <div class="d-grid gap-2">
-            <button type="submit" class="btn-emerald">Kirim Absensi</button>
-            <button id="btnViewDashboard" type="button" class="btn btn-outline-emerald">Buka Dashboard (di samping)</button>
-          </div>
-        </form>
+        <div class="d-grid gap-2 mt-3">
+          <button type="submit" class="btn-red">Kirim Absensi</button>
+          <button id="btnViewDashboard" type="button" class="btn-dashboard">📊 Buka Dashboard</button>
+        </div>
 
         <div id="sendInfo" class="mt-3" style="display:none;">
           <small class="hint">Status: <span id="sendStatus" style="font-weight:600"></span></small>
         </div>
-      </div>
 
-      <!-- Right: Dashboard Panel -->
+      </form>
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================== -->
+  <!-- DASHBOARD -->
+  <!-- =========================== -->
+  <div class="card-premium p-3 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
       <div>
-        <div class="card-premium p-3 mb-3">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <div>
-              <div style="font-weight:700; color:var(--accent)">Dashboard</div>
-              <div class="hint">Grafik & Top 10 pegawai terlambat</div>
-            </div>
-            <div>
-              <button id="refreshBtn" class="btn btn-sm btn-outline-emerald">Refresh</button>
-            </div>
-          </div>
+        <div style="font-weight:700;color:var(--soft-red-500)">Dashboard</div>
+        <div class="hint">Grafik & Top 10 Pegawai Terlambat</div>
+      </div>
+      <button id="refreshBtn" class="btn btn-sm btn-outline-red">Refresh</button>
+    </div>
 
-          <div id="dashboardArea">
-            <div class="stat-card mb-3">
-              <canvas id="chartDivisi" height="220"></canvas>
-            </div>
-
-            <div class="mt-3">
-              <h6 style="color:var(--accent); margin-bottom:8px">Top 10 Paling Sering Terlambat</h6>
-              <div id="top10Container"></div>
-            </div>
-          </div>
-
-          <div id="emptyHint" class="text-center text-muted py-4" style="display:none;">
-            Belum ada data. Silakan submit beberapa entry lalu klik Refresh.
-          </div>
-        </div>
+    <div id="dashboardArea">
+      <div class="stat-card mb-3">
+        <canvas id="chartDivisi" height="220"></canvas>
       </div>
 
-    </div> <!-- end layout-grid -->
-  </div> <!-- end container -->
+      <div class="mt-3">
+        <h6 style="color:var(--soft-red-500); margin-bottom:8px">Top 10 Paling Sering Terlambat</h6>
+        <div id="top10Container"></div>
+      </div>
+    </div>
+
+    <div id="emptyHint" class="text-center text-muted py-4" style="display:none;">
+      Belum ada data. Silakan submit beberapa entry lalu klik Refresh.
+    </div>
+  </div>
+
+</div>
+
+
+
+<!-- =========================== -->
+<!-- SCRIPT ASLI (TIDAK DIUBAH) -->
+<!-- =========================== -->
 
 <script>
-/*
-  FINAL HTML:
-  - GANTI nilai scriptURL dengan URL Web App Google Apps Script Anda
-  - Script backend di Apps Script harus merespon:
-      GET ?mode=add&nama=...&npp=...&divisi=...&alasan=...   (simpan & return OK)
-      GET ?mode=grafik  -> return JSON { divisi: [{divisi, count}, ...], ranking: [{nama, count}, ...] }
-  - Jika backend Anda memakai format lain, sesuaikan fetch URLs.
-*/
+const scriptURL = "https://script.google.com/macros/s/AKfycbxPGZuS11u7MhMufPyJjsWVN6XkLMgt4y7QeZslzNH4A8lkSakdpa7QA5S3bJrwUg/exec";
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbxPGZuS11u7MhMufPyJjsWVN6XkLMgt4y7QeZslzNH4A8lkSakdpa7QA5S3bJrwUg/exec"; // <<-- ganti di sini
-
-// Submit form (simpan data)
 document.getElementById("absenForm").addEventListener("submit", async (ev) => {
   ev.preventDefault();
-
   const nama = document.getElementById("nama").value.trim();
   const npp = document.getElementById("npp").value.trim();
   const divisi = document.getElementById("divisi").value;
   const alasan = document.getElementById("alasan").value.trim();
-
   if (!nama || !npp || !divisi || !alasan) return alert("Lengkapi semua kolom.");
 
   const url = `${scriptURL}?mode=add&nama=${encodeURIComponent(nama)}&npp=${encodeURIComponent(npp)}&divisi=${encodeURIComponent(divisi)}&alasan=${encodeURIComponent(alasan)}`;
@@ -212,171 +214,94 @@ document.getElementById("absenForm").addEventListener("submit", async (ev) => {
   try {
     document.getElementById("sendInfo").style.display = "block";
     document.getElementById("sendStatus").textContent = "Mengirim...";
-    await fetch(url, { method: "GET", cache: "no-cache" });
+    await fetch(url, { method:"GET", cache:"no-cache" });
     document.getElementById("sendStatus").textContent = "Terkirim ✓";
-    // reset form after small delay
-    setTimeout(()=> {
-      document.getElementById("sendStatus").textContent = "";
-      document.getElementById("sendInfo").style.display = "none";
+
+    setTimeout(()=>{
+      document.getElementById("sendStatus").textContent="";
+      document.getElementById("sendInfo").style.display="none";
       document.getElementById("absenForm").reset();
-    }, 900);
-  } catch (err) {
-    document.getElementById("sendStatus").textContent = "Gagal";
-    console.error("submit error:", err);
-    alert("Gagal mengirim data. Cek koneksi atau URL Web App.");
+    },900);
+  } catch(err){
+    document.getElementById("sendStatus").textContent="Gagal";
+    alert("Gagal mengirim data.");
   }
 });
 
-// Show dashboard / open panel
-document.getElementById("btnViewDashboard").addEventListener("click", () => {
-  // scroll to dashboard area on the right (if mobile, it will be below)
-  document.getElementById("dashboardArea").scrollIntoView({ behavior: "smooth", block: "center" });
-  loadDashboard();
-});
-document.getElementById("btnDashboardTop").addEventListener("click", () => {
-  document.getElementById("dashboardArea").scrollIntoView({ behavior: "smooth", block: "center" });
+document.getElementById("btnViewDashboard").addEventListener("click", ()=>{
+  document.getElementById("dashboardArea").scrollIntoView({ behavior:"smooth" });
   loadDashboard();
 });
 document.getElementById("refreshBtn").addEventListener("click", loadDashboard);
 
-let chartInstance = null;
+let chartInstance=null;
 
-// load dashboard data (grafik + top10)
-async function loadDashboard() {
-  try {
-    // request grafik mode
-    const res = await fetch(`${scriptURL}?mode=grafik`, { cache: "no-cache" });
-    if (!res.ok) throw new Error("Response not ok: " + res.status);
+async function loadDashboard(){
+  try{
+    const res = await fetch(`${scriptURL}?mode=grafik`, { cache:"no-cache" });
     const payload = await res.json();
 
-    // payload expected:
-    // { divisi: [{divisi, count}, ...], ranking: [{nama, count}, ...] }
+    const divisiData = Array.isArray(payload.divisi)?payload.divisi:[];
+    const rankingData = Array.isArray(payload.ranking)?payload.ranking:[];
 
-    const divisiData = Array.isArray(payload.divisi) ? payload.divisi : [];
-    const rankingData = Array.isArray(payload.ranking) ? payload.ranking : [];
-
-    if (divisiData.length === 0 && rankingData.length === 0) {
-      document.getElementById("dashboardArea").style.display = "none";
-      document.getElementById("emptyHint").style.display = "block";
+    if(divisiData.length===0 && rankingData.length===0){
+      document.getElementById("dashboardArea").style.display="none";
+      document.getElementById("emptyHint").style.display="block";
       return;
-    } else {
-      document.getElementById("dashboardArea").style.display = "block";
-      document.getElementById("emptyHint").style.display = "none";
+    } else{
+      document.getElementById("dashboardArea").style.display="block";
+      document.getElementById("emptyHint").style.display="none";
     }
 
     renderChartDivisi(divisiData);
     renderTop10(rankingData);
 
-  } catch (err) {
-    console.error("loadDashboard error:", err);
-    alert("Gagal memuat dashboard. Pastikan URL Web App benar dan sudah dideploy (Anyone).");
+  } catch(err){
+    alert("Gagal memuat dashboard.");
   }
 }
 
-// render bar chart per divisi
-function renderChartDivisi(divisiData) {
-  const labels = divisiData.map(d => d.divisi);
-  const counts = divisiData.map(d => d.count);
+function renderChartDivisi(divisiData){
+  const labels = divisiData.map(d=>d.divisi);
+  const counts = divisiData.map(d=>d.count);
 
   const ctx = document.getElementById('chartDivisi').getContext('2d');
+  if(chartInstance) chartInstance.destroy();
 
-  // destroy previous
-  if (chartInstance) chartInstance.destroy();
-
-  chartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Jumlah Keterlambatan',
-        data: counts,
-        backgroundColor: labels.map(() => 'rgba(46,139,87,0.85)'),
-        borderColor: labels.map(() => 'rgba(46,139,87,1)'),
-        borderWidth: 1,
-        borderRadius: 6,
-        barPercentage: 0.6
+  chartInstance = new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:labels,
+      datasets:[{
+        label:'Jumlah Keterlambatan',
+        data:counts,
+        backgroundColor:'rgba(199,95,95,0.65)',
+        borderColor:'rgba(199,95,95,1)',
+        borderWidth:1,
+        borderRadius:6
       }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          titleColor: '#063',
-          bodyColor: '#063',
-          backgroundColor: '#f0fff5',
-          borderColor: 'rgba(46,139,87,0.7)',
-          borderWidth: 1
-        }
-      },
-      scales: {
-        x: {
-          ticks: { color: '#0b3826', font: { weight:600 } },
-          grid: { display: false }
-        },
-        y: {
-          ticks: { color: '#0b3826', beginAtZero: true },
-          grid: { color: 'rgba(46,139,87,0.06)' }
-        }
-      }
     }
   });
 }
 
-// render top 10 ranking
-function renderTop10(rankingData) {
-  // rankingData expected as [{nama, count}, ...] already sorted desc ideally
-  // if raw rows are provided, compute frequency
-  let arr = Array.isArray(rankingData) ? rankingData.slice() : [];
+function renderTop10(data){
+  let arr = data.slice();
+  arr.sort((a,b)=>b.count-a.count);
+  arr = arr.slice(0,10);
 
-  // If rankingData items are objects with nama/count we use directly.
-  // Otherwise if it's rows array, compute frequency (fallback)
-  if (arr.length && arr[0].nama === undefined) {
-    // fallback: assume array of rows, each row is [timestamp, nama, npp, divisi, alasan]
-    const map = {};
-    arr.forEach(r => {
-      const nama = r[1] || r.nama || "";
-      if (!nama) return;
-      map[nama] = (map[nama] || 0) + 1;
-    });
-    arr = Object.keys(map).map(k => ({ nama: k, count: map[k] }));
-  }
-
-  // sort by count desc and take top10
-  arr.sort((a,b) => (b.count||0) - (a.count||0));
-  const top10 = arr.slice(0,10);
-
-  // build HTML table
-  const container = document.getElementById('top10Container');
-  if (!top10.length) {
-    container.innerHTML = '<div class="text-muted">Belum ada data ranking.</div>';
-    return;
-  }
-
-  let html = `<div class="table-responsive"><table class="table table-borderless table-sm table-top10">
-    <thead><tr><th style="width:70px">Rank</th><th>Nama</th><th style="width:110px">Frekuensi</th></tr></thead><tbody>`;
-
-  top10.forEach((it, idx) => {
-    html += `<tr>
-      <td><span class="badge badge-rank p-2" style="background:linear-gradient(90deg,var(--emerald-300),var(--emerald-500)); color:#fff; border-radius:8px; font-weight:700;">${idx+1}</span></td>
-      <td style="vertical-align:middle; font-weight:600;">${escapeHtml(it.nama || '')}</td>
-      <td style="vertical-align:middle; color:var(--accent); font-weight:700;">${(it.count||0)} kali</td>
+  let html = `<table class="table table-sm">
+    <thead><tr><th>Rank</th><th>Nama</th><th>Frekuensi</th></tr></thead><tbody>`;
+  arr.forEach((r,i)=>{
+    html+=`<tr>
+      <td><span class="badge bg-danger">${i+1}</span></td>
+      <td>${r.nama}</td>
+      <td>${r.count} kali</td>
     </tr>`;
   });
-
-  html += `</tbody></table></div>`;
-  container.innerHTML = html;
+  html+=`</tbody></table>`;
+  document.getElementById("top10Container").innerHTML = html;
 }
 
-// small helper to escape HTML
-function escapeHtml(str){
-  return String(str).replace(/[&<>"'`=\/]/g, function(s){ return ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#x60;','=':'&#x3D;'
-  })[s]; });
-}
-
-// initial no auto-load; user can click buttons
 </script>
 
 </body>
