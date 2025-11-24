@@ -100,6 +100,29 @@
       padding:14px;
     }
 
+    .custom-header{
+      background: var(--soft-red-500);
+      color: white;
+      padding: 22px 26px;
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
+      border-bottom: 3px solid rgba(0,0,0,0.08);
+      box-shadow: inset 0 -2px 4px rgba(0,0,0,0.08);
+      margin-bottom: 30px;
+    }
+
+    .custom-header .header-title{
+      margin:0;
+      font-weight:700;
+      font-size:22px;
+      letter-spacing:0.3px;   
+    }
+
+    .custom-header .header-subtitle{
+      margin:4px 0 0;
+      font-size:14px;
+      opacity:0.9;
+    }
   </style>
 </head>
 <body>
@@ -113,11 +136,10 @@
 
   <!-- FORM -->
   <div class="card-premium card-form mb-4">
-    <div class="card-header">
-      <h4 style="color:var(--soft-red-500);">Form Keterlambatan</h4>
-      <p class="hint mb-3">Isi data pegawai yang terlambat. Data akan tersimpan di Database HCC.</p>
+    <div class="card-header custom-header">
+      <h4 class="header-title">Form Keterlambatan</h4>
+      <p class="header-subtitle">Isi data pegawai yang terlambat. Data akan tersimpan di Database HCC.</p>
     </div>
-
     <div class="card-body">
       <!-- Form START (pastikan tombol submit berada di dalam form) -->
       <form id="absenForm">
@@ -125,12 +147,10 @@
           <label class="form-label">Nama Pegawai</label>
           <input id="nama" type="text" class="form-control" required placeholder="Nama Lengkap">
         </div>
-
         <div class="mb-3">
           <label class="form-label">NPP Pegawai</label>
           <input id="npp" type="text" class="form-control" required placeholder="NPP Pegawai">
         </div>
-
         <div class="mb-3">
           <label class="form-label">Divisi</label>
           <select id="divisi" class="form-select" required>
@@ -140,7 +160,6 @@
             <option>PLM</option><option>SBD</option>
           </select>
         </div>
-
         <div class="mb-3">
           <label class="form-label">Alasan Keterlambatan</label>
           <textarea id="alasan" rows="3" class="form-control" required></textarea>
