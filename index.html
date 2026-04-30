@@ -5,13 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Absensi Keterlambatan - Emerald Premium</title>
 
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
@@ -67,6 +62,13 @@
       font-weight:600;
       border-radius:10px;
       padding:10px 16px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .btn-red:disabled{
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none !important;
     }
 
     .btn-outline-red{
@@ -115,7 +117,7 @@
       margin:0;
       font-weight:700;
       font-size:22px;
-      letter-spacing:0.3px;   
+      letter-spacing:0.3px;
     }
 
     .custom-header .header-subtitle{
@@ -123,9 +125,63 @@
       font-size:14px;
       opacity:0.9;
     }
+
+    /* ── LOADING OVERLAY ── */
+    #loadingOverlay{
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 18px;
+    }
+    #loadingOverlay.show{
+      display: flex;
+    }
+    .spinner-box{
+      background: #fff;
+      border-radius: 18px;
+      padding: 36px 48px;
+      text-align: center;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+    }
+    .spinner-ring{
+      width: 56px;
+      height: 56px;
+      border: 5px solid var(--soft-red-100);
+      border-top-color: var(--soft-red-500);
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin{
+      to { transform: rotate(360deg); }
+    }
+    .spinner-text{
+      font-weight: 600;
+      color: var(--soft-red-500);
+      font-size: 15px;
+    }
+    .spinner-sub{
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
+
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay">
+  <div class="spinner-box">
+    <div class="spinner-ring"></div>
+    <div class="spinner-text">Mengirim Absensi...</div>
+    <div class="spinner-sub">Mohon tunggu sebentar</div>
+  </div>
+</div>
 
 <div class="container">
 
@@ -141,7 +197,6 @@
       <p class="header-subtitle">Isi data pegawai yang terlambat. Data akan tersimpan di Database HCC.</p>
     </div>
     <div class="card-body">
-      <!-- Form START (pastikan tombol submit berada di dalam form) -->
       <form id="absenForm">
         <div class="mb-3">
           <label class="form-label">Nama Pegawai</label>
@@ -166,7 +221,7 @@
         </div>
 
         <div class="d-grid gap-2">
-          <button type="submit" class="btn-red">Kirim Absensi</button>
+          <button id="btnKirim" type="submit" class="btn-red">Kirim Absensi</button>
           <button id="btnViewDashboard" type="button" class="btn-dashboard">📊 Buka Dashboard</button>
         </div>
 
@@ -174,7 +229,6 @@
           <small class="hint">Status: <span id="sendStatus" style="font-weight:600"></span></small>
         </div>
       </form>
-      <!-- Form END -->
     </div>
   </div>
 
@@ -192,7 +246,6 @@
       <div class="stat-card mb-3">
         <canvas id="chartDivisi" height="220"></canvas>
       </div>
-
       <div class="mt-3">
         <h6 style="color:var(--soft-red-500); margin-bottom:8px">Top 10 Paling Sering Terlambat</h6>
         <div id="top10Container"></div>
@@ -206,12 +259,12 @@
 
 </div>
 
-<!-- MODAL (ditambahkan) -->
+<!-- MODAL SUKSES -->
 <div class="modal fade" id="msgModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="border-radius:16px;">
       <div class="modal-header border-0">
-        <h5 class="modal-title" style="color:var(--soft-red-500);">Sukses!</h5>
+        <h5 class="modal-title" style="color:var(--soft-red-500);">✅ Sukses!</h5>
       </div>
       <div class="modal-body text-center">
         <p>Terima kasih, data Anda telah kami simpan.</p>
@@ -223,117 +276,150 @@
   </div>
 </div>
 
-<!-- IMPORTANT: load Bootstrap JS BEFORE the script that calls bootstrap.Modal -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- SCRIPT ASLI (TIDAK DIUBAH) - hanya ditambahkan pemanggil modal setelah Terkirim -->
 <script>
 const scriptURL = "https://script.google.com/macros/s/AKfycbxPGZuS11u7MhMufPyJjsWVN6XkLMgt4y7QeZslzNH4A8lkSakdpa7QA5S3bJrwUg/exec";
 
+// ── Guard: mencegah pengiriman lebih dari sekali ──
+let isSending = false;
+
+const overlay    = document.getElementById("loadingOverlay");
+const btnKirim   = document.getElementById("btnKirim");
+
+function showLoading() {
+  overlay.classList.add("show");
+  btnKirim.disabled = true;
+  btnKirim.textContent = "Mengirim...";
+}
+
+function hideLoading() {
+  overlay.classList.remove("show");
+  btnKirim.disabled = false;
+  btnKirim.textContent = "Kirim Absensi";
+}
+
 document.getElementById("absenForm").addEventListener("submit", async (ev) => {
   ev.preventDefault();
-  const nama = document.getElementById("nama").value.trim();
-  const npp = document.getElementById("npp").value.trim();
+
+  // ── Blokir jika sedang dalam proses pengiriman ──
+  if (isSending) return;
+
+  const nama   = document.getElementById("nama").value.trim();
+  const npp    = document.getElementById("npp").value.trim();
   const divisi = document.getElementById("divisi").value;
   const alasan = document.getElementById("alasan").value.trim();
+
   if (!nama || !npp || !divisi || !alasan) return alert("Lengkapi semua kolom.");
+
+  // ── Tandai sedang mengirim & tampilkan loading ──
+  isSending = true;
+  showLoading();
 
   const url = `${scriptURL}?mode=add&nama=${encodeURIComponent(nama)}&npp=${encodeURIComponent(npp)}&divisi=${encodeURIComponent(divisi)}&alasan=${encodeURIComponent(alasan)}`;
 
   try {
     document.getElementById("sendInfo").style.display = "block";
     document.getElementById("sendStatus").textContent = "Mengirim...";
-    await fetch(url, { method:"GET", cache:"no-cache" });
+
+    await fetch(url, { method: "GET", cache: "no-cache" });
+
     document.getElementById("sendStatus").textContent = "Terkirim ✓";
 
-    // --- tampilkan modal sukses (Bootstrap sudah dimuat sebelumnya)
+    hideLoading();
+
+    // Tampilkan modal sukses
     if (window.bootstrap && document.getElementById('msgModal')) {
       const modal = new bootstrap.Modal(document.getElementById('msgModal'));
       modal.show();
     }
 
-    setTimeout(()=>{
-      document.getElementById("sendStatus").textContent="";
-      document.getElementById("sendInfo").style.display="none";
+    setTimeout(() => {
+      document.getElementById("sendStatus").textContent = "";
+      document.getElementById("sendInfo").style.display = "none";
       document.getElementById("absenForm").reset();
-    },900);
-  } catch(err){
-    document.getElementById("sendStatus").textContent="Gagal";
+      // ── Reset guard setelah form direset ──
+      isSending = false;
+    }, 900);
+
+  } catch (err) {
+    hideLoading();
+    isSending = false; // ── Reset guard jika gagal agar bisa coba ulang ──
+    document.getElementById("sendStatus").textContent = "Gagal";
     alert("Gagal mengirim data.");
   }
 });
 
-document.getElementById("btnViewDashboard").addEventListener("click", ()=>{
-  document.getElementById("dashboardArea").scrollIntoView({ behavior:"smooth" });
+document.getElementById("btnViewDashboard").addEventListener("click", () => {
+  document.getElementById("dashboardArea").scrollIntoView({ behavior: "smooth" });
   loadDashboard();
 });
 document.getElementById("refreshBtn").addEventListener("click", loadDashboard);
 
-let chartInstance=null;
+let chartInstance = null;
 
-async function loadDashboard(){
-  try{
-    const res = await fetch(`${scriptURL}?mode=grafik`, { cache:"no-cache" });
+async function loadDashboard() {
+  try {
+    const res = await fetch(`${scriptURL}?mode=grafik`, { cache: "no-cache" });
     const payload = await res.json();
 
-    const divisiData = Array.isArray(payload.divisi)?payload.divisi:[];
-    const rankingData = Array.isArray(payload.ranking)?payload.ranking:[];
+    const divisiData   = Array.isArray(payload.divisi)  ? payload.divisi  : [];
+    const rankingData  = Array.isArray(payload.ranking) ? payload.ranking : [];
 
-    if(divisiData.length===0 && rankingData.length===0){
-      document.getElementById("dashboardArea").style.display="none";
-      document.getElementById("emptyHint").style.display="block";
+    if (divisiData.length === 0 && rankingData.length === 0) {
+      document.getElementById("dashboardArea").style.display = "none";
+      document.getElementById("emptyHint").style.display = "block";
       return;
-    } else{
-      document.getElementById("dashboardArea").style.display="block";
-      document.getElementById("emptyHint").style.display="none";
+    } else {
+      document.getElementById("dashboardArea").style.display = "block";
+      document.getElementById("emptyHint").style.display = "none";
     }
 
     renderChartDivisi(divisiData);
     renderTop10(rankingData);
-
-  } catch(err){
+  } catch (err) {
     alert("Gagal memuat dashboard.");
   }
 }
 
-function renderChartDivisi(divisiData){
-  const labels = divisiData.map(d=>d.divisi);
-  const counts = divisiData.map(d=>d.count);
+function renderChartDivisi(divisiData) {
+  const labels = divisiData.map(d => d.divisi);
+  const counts = divisiData.map(d => d.count);
 
   const ctx = document.getElementById('chartDivisi').getContext('2d');
-  if(chartInstance) chartInstance.destroy();
+  if (chartInstance) chartInstance.destroy();
 
-  chartInstance = new Chart(ctx,{
-    type:'bar',
-    data:{
-      labels:labels,
-      datasets:[{
-        label:'Jumlah Keterlambatan',
-        data:counts,
-        backgroundColor:'rgba(199,95,95,0.65)',
-        borderColor:'rgba(199,95,95,1)',
-        borderWidth:1,
-        borderRadius:6
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Jumlah Keterlambatan',
+        data: counts,
+        backgroundColor: 'rgba(199,95,95,0.65)',
+        borderColor: 'rgba(199,95,95,1)',
+        borderWidth: 1,
+        borderRadius: 6
       }]
     }
   });
 }
 
-function renderTop10(data){
+function renderTop10(data) {
   let arr = data.slice();
-  arr.sort((a,b)=>b.count-a.count);
-  arr = arr.slice(0,10);
+  arr.sort((a, b) => b.count - a.count);
+  arr = arr.slice(0, 10);
 
   let html = `<table class="table table-sm">
     <thead><tr><th>Rank</th><th>Nama</th><th>Frekuensi</th></tr></thead><tbody>`;
-  arr.forEach((r,i)=>{
-    html+=`<tr>
-      <td><span class="badge bg-danger">${i+1}</span></td>
+  arr.forEach((r, i) => {
+    html += `<tr>
+      <td><span class="badge bg-danger">${i + 1}</span></td>
       <td>${r.nama}</td>
       <td>${r.count} kali</td>
     </tr>`;
   });
-  html+=`</tbody></table>`;
+  html += `</tbody></table>`;
   document.getElementById("top10Container").innerHTML = html;
 }
 </script>
